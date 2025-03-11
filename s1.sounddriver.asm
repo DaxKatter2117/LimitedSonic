@@ -2608,11 +2608,11 @@ Music8E:	include	"sound/music/Mus8E - Sonic Got Through.asm"
 		even
 Music8F:	include	"sound/music/Mus8F - Game Over.asm"
 		even
-Music90:	include	"sound/music/Mus90 - Continue Screen.asm"
+Music90:	include	"sound/music/Mus90 - Good Ending.asm"
 		even
 Music91:	include	"sound/music/Mus91 - Credits.asm"
 		even
-Music92:	include	"sound/music/Mus92 - Drowning.asm"
+Music92:	include	"sound/music/Mus92 - Good Credits.asm"
 		even
 Music93:	include	"sound/music/Mus93 - Get Emerald.asm"
 		even

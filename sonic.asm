@@ -2018,6 +2018,7 @@ Pal_SBZ3SonWat:	binclude	"palette/Sonic - SBZ3 Underwater.bin"
 Pal_SSResult:	binclude	"palette/Special Stage Results.bin"
 Pal_Continue:	binclude	"palette/Special Stage Continue Bonus.bin"
 Pal_Ending:	binclude	"palette/Ending.bin"
+Pal_GEnding:	binclude	"palette/Good Ending.bin"
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to	wait for VBlank routines to complete
@@ -3867,9 +3868,9 @@ GM_Ending:
 		move.w	#$8A00+223,(v_hbla_hreg).w ; set palette change position (for water)
 		move.w	(v_hbla_hreg).w,(a6)
 		move.w	#30,(v_air).w
-		move.w	#id_EndZ<<8,(v_zone).w ; set level number to 0600 (extra flowers)
-		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
-		beq.s	End_LoadData	; if yes, branch
+;		move.w	#id_EndZ<<8,(v_zone).w ; set level number to 0600 (extra flowers)
+;		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+;		beq.s	End_LoadData	; if yes, branch
 		move.w	#(id_EndZ<<8)+1,(v_zone).w ; set level number to 0601 (no flowers)
 
 End_LoadData:
@@ -3901,11 +3902,18 @@ End_LoadMusic:
 		subi.w	#1,(v_framecount).l
 		tst.b	(v_framecount).l
 		bne.s	End_LoadMusic
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+        beq.s   .goodmusic
 		move.w	#bgm_Ending,d0
 		bsr.w	PlaySound	; play ending sequence music
+        bra.s   End_LoadSonic
 ;		btst	#bitA,(v_jpadhold1).w ; is button A pressed?
 ;		beq.s	End_LoadSonic	; if not, branch
 ;		move.b	#1,(f_debugmode).w ; enable debug mode
+
+.goodmusic:
+		move.w	#bgm_GEnding,d0
+		bsr.w	PlaySound	; play ending sequence music
 
 End_LoadSonic:
 		move.b	#id_SonicPlayer,(v_player).w ; load Sonic object
@@ -3962,8 +3970,18 @@ End_MainLoop:
 		beq.s	End_ChkEmerald	; if yes, branch
 
 		move.b	#id_Credits,(v_gamemode).w ; goto credits
+
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+        beq.s   .goodcredits
 		move.b	#bgm_Credits,d0
 		bsr.w	PlaySound_Special ; play credits music
+        bra.s   .resetcreditsnum
+
+.goodcredits:
+		move.b	#bgm_GCredits,d0
+		bsr.w	PlaySound_Special ; play credits music
+
+.resetcreditsnum
 		move.w	#0,(v_creditsnum).w ; set credits index number to 0
 		rts	
 ; ===========================================================================
@@ -4099,7 +4117,7 @@ GM_Credits:
 		moveq	#palid_Sonic,d0
 		bsr.w	PalLoad1	; load Sonic's palette
 
-        cmpi.w  #6,(v_emeralds).w
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
         beq.s   .goodending
 		move.b	#id_CreditsText,(v_credits).w ; load credits object
         bra.s   .badending
@@ -5272,7 +5290,13 @@ LevelDataLoad:
 		cmpi.w	#(id_SBZ<<8)+1,(v_zone).w ; is level SBZ2?
 		beq.s	.isSBZorFZ	; if yes, branch
 		cmpi.w	#(id_SBZ<<8)+2,(v_zone).w ; is level FZ?
-		bne.s	.normalpal	; if not, branch
+		beq.s	.isSBZorFZ	; if yes, branch
+        cmpi.w  #(id_EndZ<<8)+1,(v_zone).w ; is level ending?
+        bne.s   .normalpal  ; if not, branch
+        cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+        bne.s   .normalpal  ; if not, branch
+        moveq   #palid_GEnding,d0   ; use good ending palette
+        bra.s   .normalpal
 
 .isSBZorFZ:
 		moveq	#palid_SBZ2,d0	; use SBZ2/FZ palette
