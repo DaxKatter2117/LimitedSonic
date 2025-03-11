@@ -4098,7 +4098,16 @@ GM_Credits:
 
 		moveq	#palid_Sonic,d0
 		bsr.w	PalLoad1	; load Sonic's palette
+
+        cmpi.w  #6,(v_emeralds).w
+        beq.s   .goodending
 		move.b	#id_CreditsText,(v_credits).w ; load credits object
+        bra.s   .badending
+
+.goodending:
+		move.b	#id_GoodCredits,(v_credits).w ; load credits object
+
+.badending:
 		jsr	(ExecuteObjects).l
 		jsr	(BuildSprites).l
 		bsr.w	EndingDemoLoad
