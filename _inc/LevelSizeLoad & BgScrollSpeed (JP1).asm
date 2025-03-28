@@ -198,6 +198,7 @@ BgScroll_GHZ:
 		clr.l	(a2)+
 		clr.l	(a2)+
 		clr.l	(a2)+
+;		bra.w	Deform_GHZ
 		rts
 ; ===========================================================================
 
@@ -215,7 +216,7 @@ BgScroll_SLZ:
 		asr.l	#1,d0
 		addi.w	#$C0,d0
 		move.w	d0,(v_bgscreenposy).w
-		clr.l	(v_bgscreenposx).w
+;		clr.l	(v_bgscreenposx).w
 		rts	
 ; ===========================================================================
 
@@ -225,35 +226,41 @@ BgScroll_SYZ:
 		asl.l	#1,d0
 		add.l	d2,d0
 		asr.l	#8,d0
-		addq.w	#1,d0
+;		addq.w	#1,d0
 		move.w	d0,(v_bgscreenposy).w
-		clr.l	(v_bgscreenposx).w
+		move.w	d0,(v_bg2screenposy).w
+;		clr.l	(v_bgscreenposx).w
 		rts	
 ; ===========================================================================
 
 BgScroll_SBZ:
-		andi.w	#$7F8,d0
-		asr.w	#3,d0
-		addq.w	#1,d0
+;		andi.w	#$7F8,d0
+;		asr.w	#3,d0
+;		addq.w	#1,d0
+		asl.l	#4,d0
+		asl.l	#1,d0
+		asr.l	#8,d0
 		move.w	d0,(v_bgscreenposy).w
 		rts	
 ; ===========================================================================
 
 BgScroll_End:
-		move.w	(v_screenposx).w,d0
-		asr.w	#1,d0
-		move.w	d0,(v_bgscreenposx).w
-		move.w	d0,(v_bg2screenposx).w
-		asr.w	#2,d0
-		move.w	d0,d1
-		add.w	d0,d0
-		add.w	d1,d0
-		move.w	d0,(v_bg3screenposx).w
-		clr.l	(v_bgscreenposy).w
-		clr.l	(v_bg2screenposy).w
-		clr.l	(v_bg3screenposy).w
-		lea	(v_bgscroll_buffer).w,a2
-		clr.l	(a2)+
-		clr.l	(a2)+
-		clr.l	(a2)+
+		move.w	#$1E,(v_bgscreenposy).w
+		move.w	#$1E,(v_bg2screenposy).w
+;		move.w	(v_screenposx).w,d0
+;		asr.w	#1,d0
+;		move.w	d0,(v_bgscreenposx).w
+;		move.w	d0,(v_bg2screenposx).w
+;		asr.w	#2,d0
+;		move.w	d0,d1
+;		add.w	d0,d0
+;		add.w	d1,d0
+;		move.w	d0,(v_bg3screenposx).w
+;		clr.l	(v_bgscreenposy).w
+;		clr.l	(v_bg2screenposy).w
+;		clr.l	(v_bg3screenposy).w
+;		lea	(v_bgscroll_buffer).w,a2
+;		clr.l	(a2)+
+;		clr.l	(a2)+
+;		clr.l	(a2)+
 		rts
