@@ -18,7 +18,7 @@ PaletteCycle:
 ; ---------------------------------------------------------------------------
 ; Palette cycling routines
 ; ---------------------------------------------------------------------------
-PalCycle_Index:	dc.w PalCycle_GHZ-PalCycle_Index
+PalCycle_Index:	dc.w PalCycle_LZ-PalCycle_Index
 		dc.w PalCycle_LZ-PalCycle_Index
 		dc.w PalCycle_MZ-PalCycle_Index
 		dc.w PalCycle_SLZ-PalCycle_Index
@@ -32,25 +32,28 @@ PalCycle_Index:	dc.w PalCycle_GHZ-PalCycle_Index
 
 
 PalCycle_Title:
+		bra.s	PalCycle_LZ
 ;		lea	(Pal_TitleCyc).l,a0
 ;		bra.s	PCycGHZ_Go
 ; ===========================================================================
 
 PalCycle_GHZ:
-;		lea	(Pal_GHZCyc).l,a0
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+        bne.s   PalCycle_LZ
+		lea	(Pal_GHZCyc).l,a0
 
 PCycGHZ_Go:
-;		subq.w	#1,(v_pcyc_time).w ; decrement timer
-;		bpl.s	PCycGHZ_Skip	; if time remains, branch
-;
-;		move.w	#5,(v_pcyc_time).w ; reset timer to 5 frames
-;		move.w	(v_pcyc_num).w,d0 ; get cycle number
-;		addq.w	#1,(v_pcyc_num).w ; increment cycle number
-;		andi.w	#3,d0		; if cycle > 3, reset to 0
-;		lsl.w	#3,d0
-;		lea	(v_pal_dry+$50).w,a1
-;		move.l	(a0,d0.w),(a1)+
-;		move.l	4(a0,d0.w),(a1)	; copy palette data to RAM
+		subq.w	#1,(v_pcyc_time).w ; decrement timer
+		bpl.s	PCycGHZ_Skip	; if time remains, branch
+
+		move.w	#5,(v_pcyc_time).w ; reset timer to 5 frames
+		move.w	(v_pcyc_num).w,d0 ; get cycle number
+		addq.w	#1,(v_pcyc_num).w ; increment cycle number
+		andi.w	#3,d0		; if cycle > 3, reset to 0
+		lsl.w	#3,d0
+		lea	(v_pal_dry+$50).w,a1
+		move.l	(a0,d0.w),(a1)+
+		move.l	4(a0,d0.w),(a1)	; copy palette data to RAM
 
 PCycGHZ_Skip:
 		rts	
