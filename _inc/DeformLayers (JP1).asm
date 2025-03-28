@@ -40,7 +40,7 @@ Deform_Index:	dc.w Deform_GHZ-Deform_Index, Deform_LZ-Deform_Index
 		dc.w Deform_MZ-Deform_Index, Deform_SLZ-Deform_Index
 		dc.w Deform_SYZ-Deform_Index, Deform_SBZ-Deform_Index
 		zonewarning Deform_Index,2
-		dc.w Deform_GHZ-Deform_Index
+		dc.w Deform_Ending-Deform_Index
 ; ---------------------------------------------------------------------------
 ; Green	Hill Zone background layer deformation code
 ; ---------------------------------------------------------------------------
@@ -80,10 +80,10 @@ Deform_GHZ:
 ;		sub.w	d4,d1
 ;		move.w	(v_screenposx).w,d0
 		cmpi.b	#id_Title,(v_gamemode).w
-		bne.s	loc_633C
+		bne.s	loc_6384
 		moveq	#0,d0
 
-loc_633C:
+;loc_633C:
 ;		neg.w	d0
 ;		swap	d0
 ;		move.w	(v_bgscreenposx).w,d0
@@ -416,6 +416,93 @@ loc_6576:
 		rts	
 ; End of function Deform_SBZ
 
+; ---------------------------------------------------------------------------
+; Ending background layer deformation code
+; ---------------------------------------------------------------------------
+
+; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
+
+
+Deform_Ending:
+		cmpi.b	#6,(v_emeralds).w ; check if you have 6 emeralds
+		bne.w	BadEnd_Scroll ; if not, use bad ending deformation
+		move.w	(v_scrshiftx).w,d4
+		ext.l	d4
+		asl.l	#5,d4
+		move.l	d4,d1
+		asl.l	#1,d4
+		add.l	d1,d4
+		moveq	#0,d5
+		bsr.w	ScrollBlock1
+		bsr.w	ScrollBlock4
+		lea	(v_hscrolltablebuffer).w,a1
+		move.w	(v_screenposy).w,d0
+		andi.w	#$7FF,d0
+		lsr.w	#5,d0
+		neg.w	d0
+		addi.w	#$26,d0
+		move.w	d0,(v_bg2screenposy).w
+		move.w	d0,d4
+		bsr.w	ScrollBlock3
+		move.w	(v_bgscreenposy).w,(v_bgscrposy_vdp).w
+		move.w	#$6F,d1
+		sub.w	d4,d1
+		move.w	(v_screenposx).w,d0
+		neg.w	d0
+		swap	d0
+		move.w	(v_bgscreenposx).w,d0
+		neg.w	d0
+
+loc_6346:
+		move.l	d0,(a1)+
+		dbf	d1,loc_6346
+		move.w	#$27,d1
+		move.w	(v_bg2screenposx).w,d0
+		neg.w	d0
+
+loc_6356:
+		move.l	d0,(a1)+
+		dbf	d1,loc_6356
+		move.w	(v_bg2screenposx).w,d0
+		addi.w	#0,d0
+		move.w	(v_screenposx).w,d2
+		addi.w	#-$200,d2
+		sub.w	d0,d2
+		ext.l	d2
+		asl.l	#8,d2
+		divs.w	#$68,d2
+		ext.l	d2
+		asl.l	#8,d2
+		moveq	#0,d3
+		move.w	d0,d3
+		move.w	#$47,d1
+		add.w	d4,d1
+
+GoodEnd_LineLoop:
+		move.w	d3,d0
+		neg.w	d0
+		move.l	d0,(a1)+
+		swap	d3
+		add.l	d2,d3
+		swap	d3
+		dbf	d1,GoodEnd_LineLoop
+		rts	
+; End of function Deform_SBZ
+
+BadEnd_Scroll:
+		lea	(v_hscrolltablebuffer).w,a1
+		move.w	#224-1,d1
+		move.w	(v_screenposx).w,d0
+		neg.w	d0
+		swap	d0
+		move.w	(v_bgscreenposx).w,d0
+		move.w	#0,d0
+		neg.w	d0
+
+BadEnd_LineLoop:
+		move.l	d0,(a1)+
+		dbf	d1,BadEnd_LineLoop
+		rts
 ; ---------------------------------------------------------------------------
 ; Subroutine to	scroll the level horizontally as Sonic moves
 ; ---------------------------------------------------------------------------
