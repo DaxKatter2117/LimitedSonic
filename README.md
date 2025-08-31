@@ -1,15 +1,15 @@
-s1disasm_git
-============
+# **LIMITEDSONIC**
 
-The very latest Sonic 1 Disassembly.
+Oh no! Dr. Eggman has done it this time! He's taken South Island to the
+absolute limit! Now Sonic must unleash his final limit to stop Eggman
+from limiting South Island furthermore!
 
-See: http://info.sonicretro.org/Disassemblies
+## SPECIAL CREDITS
 
-This branch has been modified to use Sonic 2's 128x128 chunk and path-swapper systems. Modifications originally made by MarkeyJester.
+### SPECIAL THANKS:
 
-See: http://info.sonicretro.org/Project_Sonic_1:_Two-Eight
-
-DISCLAIMER:
-Any and all content presented in this repository is presented for informational and educational purposes only.
-Commercial usage is expressly prohibited. Sonic Retro claims no ownership of any code in these repositories.
-You assume any and all responsibility for using this content responsibly. Sonic Retro claims no responsibiliy or warranty.
+- Undying_Star - Slow Palette Fading
+- Ollie - Limited Jumping Physics
+- Malachi - General Assistance
+- NaylenFresh - General Assistance
+- DarkShamilKhan - General Assistance
