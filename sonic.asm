@@ -3900,10 +3900,10 @@ End_LoadMusic:
 		tst.b	(v_framecount).l
 		bne.s	End_LoadMusic
 		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
-        beq.s   .goodmusic
+		beq.s	.goodmusic
 		move.w	#bgm_Ending,d0
 		bsr.w	PlaySound	; play ending sequence music
-        bra.s   End_LoadSonic
+		bra.s	End_LoadSonic
 ;		btst	#bitA,(v_jpadhold1).w ; is button A pressed?
 ;		beq.s	End_LoadSonic	; if not, branch
 ;		move.b	#1,(f_debugmode).w ; enable debug mode
@@ -3969,10 +3969,10 @@ End_MainLoop:
 		move.b	#id_Credits,(v_gamemode).w ; goto credits
 
 		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
-        beq.s   .goodcredits
+		beq.s	.goodcredits
 		move.b	#bgm_Credits,d0
 		bsr.w	PlaySound_Special ; play credits music
-        bra.s   .resetcreditsnum
+		bra.s	.resetcreditsnum
 
 .goodcredits:
 		move.b	#bgm_GCredits,d0
@@ -4115,12 +4115,13 @@ GM_Credits:
 		bsr.w	PalLoad1	; load Sonic's palette
 
 		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
-        beq.s   .goodending
+		beq.s	.goodending
 		move.b	#id_CreditsText,(v_credits).w ; load credits object
-        bra.s   .badending
+		bra.s	.badending
 
 .goodending:
-		move.b	#id_GoodCredits,(v_credits).w ; load credits object
+		move.b	#id_GoodCredits,(v_credits).w	; load credits object
+		move.b	#0,(v_emeralds).w		; clear emeralds
 
 .badending:
 		jsr	(ExecuteObjects).l
@@ -5288,12 +5289,12 @@ LevelDataLoad:
 		beq.s	.isSBZorFZ	; if yes, branch
 		cmpi.w	#(id_SBZ<<8)+2,(v_zone).w ; is level FZ?
 		beq.s	.isSBZorFZ	; if yes, branch
-        cmpi.w  #(id_EndZ<<8)+1,(v_zone).w ; is level ending?
-        bne.s   .normalpal  ; if not, branch
-        cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
-        bne.s   .normalpal  ; if not, branch
-        moveq   #palid_GEnding,d0   ; use good ending palette
-        bra.s   .normalpal
+		cmpi.w	#(id_EndZ<<8)+1,(v_zone).w ; is level ending?
+		bne.s	.normalpal  ; if not, branch
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+		bne.s	.normalpal  ; if not, branch
+		moveq	#palid_GEnding,d0   ; use good ending palette
+		bra.s	.normalpal
 
 .isSBZorFZ:
 		moveq	#palid_SBZ2,d0	; use SBZ2/FZ palette
