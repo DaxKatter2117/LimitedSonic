@@ -24,6 +24,9 @@ FixBugs		  = 0	; change to 1 to enable bugfixes
 
 zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions smaller
 
+GameDebug = 1
+EmeraldDebug = 0
+
 	include "MacroSetup.asm"
 	include	"Constants.asm"
 	include	"Variables.asm"
@@ -352,7 +355,11 @@ GameInit:
 		dbf	d6,.clearRAM	; clear RAM ($0000-$FDFF)
 
 		move.b	#0,(v_lastspecial).w ; clear special stage number
+	if EmeraldDebug=0
+		move.b	#0,(v_emeralds).w ; clear emeralds
+	else
 		move.b	#6,(v_emeralds).w ; clear emeralds
+	endc
 		move.l	#0,(v_emldlist).w ; clear emeralds
 		move.l	#0,(v_emldlist+4).w ; clear emeralds
 
@@ -2351,6 +2358,7 @@ loc_3230:
 Tit_ChkLevSel:
 ;		tst.b	(f_levselcheat).w ; check if level select code is on
 ;		beq.w	StartGame	; if not, play level
+	if GameDebug<>0
 		btst	#bitA,(v_jpadhold1).w ; check if A is pressed
 		beq.w	StartGame	; if not, play level
 
@@ -2421,6 +2429,7 @@ LevSel_Credits:
 		bsr.w	PlaySound_Special ; play credits music
 		move.w	#0,(v_creditsnum).w
 		rts	
+	endc
 ; ===========================================================================
 
 StartGame:
@@ -2436,6 +2445,7 @@ StartGame:
 		bsr.w	PlaySound_Special ; fade out music
 		rts	
 
+	if GameDebug<>0
 LevSel_Level_SS:
 		add.w	d0,d0
 		move.w	LevSel_Ptrs(pc,d0.w),d0 ; load level number
@@ -2450,6 +2460,8 @@ LevSel_Level_SS:
 		move.l	d0,(v_time).w	; clear time
 		move.l	d0,(v_score).w	; clear score
 		rts	
+	endc
+
 ; ===========================================================================
 LevSel_Level:
 		andi.w	#$3FFF,d0
