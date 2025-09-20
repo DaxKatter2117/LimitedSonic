@@ -352,7 +352,7 @@ GameInit:
 		dbf	d6,.clearRAM	; clear RAM ($0000-$FDFF)
 
 		move.b	#0,(v_lastspecial).w ; clear special stage number
-		move.b	#0,(v_emeralds).w ; clear emeralds
+		move.b	#6,(v_emeralds).w ; clear emeralds
 		move.l	#0,(v_emldlist).w ; clear emeralds
 		move.l	#0,(v_emldlist+4).w ; clear emeralds
 
@@ -2349,10 +2349,10 @@ loc_3230:
 		beq.w	Tit_MainLoop	; if not, branch
 
 Tit_ChkLevSel:
-		tst.b	(f_levselcheat).w ; check if level select code is on
-		beq.w	StartGame	; if not, play level
-;		btst	#bitA,(v_jpadhold1).w ; check if A is pressed
+;		tst.b	(f_levselcheat).w ; check if level select code is on
 ;		beq.w	StartGame	; if not, play level
+		btst	#bitA,(v_jpadhold1).w ; check if A is pressed
+		beq.w	StartGame	; if not, play level
 
 		moveq	#palid_LevelSel,d0
 		bsr.w	PalLoad2	; load level select palette
