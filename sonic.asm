@@ -24,7 +24,7 @@ FixBugs		  = 0	; change to 1 to enable bugfixes
 
 zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions smaller
 
-GameDebug = 1
+GameDebug = 0
 EmeraldDebug = 0
 
 	include "MacroSetup.asm"
@@ -147,13 +147,6 @@ RomEndLoc:	dc.l EndOfRom-1		; End address of ROM
 		dc.b "JUE             " ; Region (Country code)
 EndOfHeader:
 
-; ===========================================================================
-; Crash/Freeze the 68000. Unlike Sonic 2, Sonic 1 uses the 68000 for playing music, so it stops too
-
-ErrorTrap:
-		nop	
-		nop	
-		bra.s	ErrorTrap
 ; ===========================================================================
 
 EntryPoint:
@@ -397,6 +390,14 @@ ptr_GM_Ending:	bra.w	GM_Ending	; End of game sequence ($18)
 ptr_GM_Credits:	bra.w	GM_Credits	; Credits ($1C)
 
 		rts	
+; ===========================================================================
+; Crash/Freeze the 68000. Unlike Sonic 2, Sonic 1 uses the 68000 for playing music, so it stops too
+
+ErrorTrap:
+		nop	
+		nop	
+		bra.s	ErrorTrap
+
 ; ===========================================================================
 
 CheckSumError:
