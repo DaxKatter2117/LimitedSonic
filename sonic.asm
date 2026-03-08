@@ -4133,7 +4133,6 @@ GM_Credits:
 
 .goodending:
 		move.b	#id_GoodCredits,(v_credits).w	; load credits object
-		move.b	#0,(v_emeralds).w		; clear emeralds
 
 .badending:
 		jsr	(ExecuteObjects).l
@@ -4277,6 +4276,11 @@ TryAg_MainLoop:
 		beq.s	TryAg_MainLoop
 
 TryAg_Exit:
+		cmpi.b	#6,(v_emeralds).w ; do you have all 6 emeralds?
+		bne.s	.badending
+		move.b	#0,(v_emeralds).w		; clear emeralds
+
+.badending:
 		move.b	#id_Sega,(v_gamemode).w ; goto Sega screen
 		rts	
 
