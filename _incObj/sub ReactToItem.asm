@@ -258,77 +258,7 @@ React_ChkHurt:
 
 
 HurtSonic:
-		tst.b	(v_shield).w	; does Sonic have a shield?
-		bne.s	.hasshield	; if yes, branch
-		tst.w	(v_rings).w	; does Sonic have any rings?
-		beq.w	.norings	; if not, branch
-
-		jsr	(FindFreeObj).l
-		bne.s	.hasshield
-		_move.b	#id_RingLoss,obID(a1) ; load bouncing multi rings object
-		move.w	obX(a0),obX(a1)
-		move.w	obY(a0),obY(a1)
-
-.hasshield:
-		move.b	#0,(v_shield).w	; remove shield
-		move.b	#4,obRoutine(a0)
-		bsr.w	Sonic_ResetOnFloor
-		bset	#1,obStatus(a0)
-		move.w	#-$400,obVelY(a0) ; make Sonic bounce away from the object
-		move.w	#-$200,obVelX(a0)
-		btst	#6,obStatus(a0)	; is Sonic underwater?
-		beq.s	.isdry		; if not, branch
-
-		move.w	#-$200,obVelY(a0) ; slower bounce
-		move.w	#-$100,obVelX(a0)
-
-.isdry:
-		move.w	obX(a0),d0
-		cmp.w	obX(a2),d0
-		blo.s	.isleft		; if Sonic is left of the object, branch
-		neg.w	obVelX(a0)	; if Sonic is right of the object, reverse
-
-.isleft:
-		move.w	#0,obInertia(a0)
-		move.b	#id_Hurt,obAnim(a0)
-		move.w	#120,flashtime(a0)	; set temp invincible time to 2 seconds
-	if FixBugs
-		move.w	#sfx_HitSpikes,d0
-		cmpi.b	#id_Spikes,obID(a2)	; was damage caused by spikes?
-		beq.s	.sound
-		cmpi.b	#id_Harpoon,obID(a2)	; was damage caused by LZ harpoon?
-		beq.s	.sound
-		move.w	#sfx_Death,d0
-	else
-		; This is bugged: the harpoon will never play the spike sound!
-		move.w	#sfx_Death,d0
-		cmpi.b	#id_Spikes,obID(a2)	; was damage caused by spikes?
-		bne.s	.sound
-		cmpi.b	#id_Harpoon,obID(a2)	; was damage caused by LZ harpoon?
-		bne.s	.sound
-		move.w	#sfx_HitSpikes,d0
-	endif
-
-.sound:
-		jsr	(PlaySound_Special).l
-		moveq	#-1,d0
-		rts	
-; ===========================================================================
-
-.norings:
-		tst.w	(f_debugmode).w	; is debug mode	cheat on?
-		bne.w	.hasshield	; if yes, branch
-
-; ---------------------------------------------------------------------------
-; Subroutine to	kill Sonic
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B	R O U T	I N E |||||||||||||||||||||||||||||||||||||||
-
-
 KillSonic:
-;		tst.w	(v_debuguse).w	; is debug mode	active?
-;		bne.s	.dontdie	; if yes, branch
 		move.b	#0,(v_invinc).w	; remove invincibility
 		move.b	#6,obRoutine(a0)
 		bsr.w	Sonic_ResetOnFloor

@@ -1,133 +1,122 @@
-Mus8C_Boss_Header:
-	smpsHeaderStartSong 1
-	smpsHeaderVoice     Mus8C_Boss_Voices
-	smpsHeaderChan      $06, $03
-	smpsHeaderTempo     $02, $04
+BGM_LimitBoss_Header:
+	smpsHeaderStartSong	1
+	smpsHeaderVoice		BGM_LimitBoss_Voices
+	smpsHeaderChan		$06, $02
+	smpsHeaderTempo		$02, $04
 
-	smpsHeaderDAC       Mus8C_Boss_DAC
-	smpsHeaderFM        Mus8C_Boss_FM1,	$F4, $12
-	smpsHeaderFM        Mus8C_Boss_FM2,	$E8, $08
-	smpsHeaderFM        Mus8C_Boss_FM3,	$F4, $0F
-	smpsHeaderFM        Mus8C_Boss_FM4,	$F4, $12
-	smpsHeaderFM        Mus8C_Boss_FM5,	$E8, $0F
-	smpsHeaderPSG       Mus8C_Boss_PSG1,	$D0, $03, $00, fTone_05
-	smpsHeaderPSG       Mus8C_Boss_PSG2,	$D0, $03, $00, fTone_05
-	smpsHeaderPSG       Mus8C_Boss_PSG3,	$DC, $01, $00, fTone_08
+	smpsHeaderDAC		BGM_LimitBoss_DAC
+	smpsHeaderFM		BGM_LimitBoss_FM1,  $F4, $12
+	smpsHeaderFM		BGM_LimitBoss_FM2,  $E8, $08
+	smpsHeaderFM		BGM_LimitBoss_FM3,  $F4, $0F
+	smpsHeaderFM		BGM_LimitBoss_FM4,  $F4, $12
+	smpsHeaderFM		BGM_LimitBoss_FM5,  $E8, $0F
+	smpsHeaderPSG		BGM_LimitBoss_PSG1, $D0, $03, $00, fTone_05
+	smpsHeaderPSG		BGM_LimitBoss_PSG2, $D0, $03, $00, fTone_05
 
 ; FM5 Data
-Mus8C_Boss_FM5:
-	smpsSetvoice        $05
+BGM_LimitBoss_FM5:
+	smpsSetvoice	$03
 
-Mus8C_Boss_Jump03:
+BGM_LimitBoss_Jump03:
 	dc.b	nFs7, $0C, nFs7, nFs7, nFs7
-	smpsAlterVol        $02
-	smpsCall            Mus8C_Boss_Call03
+	smpsAlterVol	$02
+	smpsCall	BGM_LimitBoss_Call03
 	dc.b	nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs7, nFs6
 	dc.b	nFs6, nFs6
-	smpsCall            Mus8C_Boss_Call03
+	smpsCall	BGM_LimitBoss_Call03
 	dc.b	nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs7, nFs6
 	dc.b	nFs7, nFs7
-	smpsAlterVol        $FE
+	smpsAlterVol	$FE
 
-Mus8C_Boss_Loop01:
-	dc.b	nFs7, $03, nFs7, $03, nFs7, $03, nFs7, $03
-	smpsLoop            $00, $04, Mus8C_Boss_Loop01
-	smpsJump            Mus8C_Boss_Jump03
+BGM_LimitBoss_Loop01:
+	dc.b	nFs7, $03, nFs7, nFs7, nFs7
+	smpsLoop	$00, $04, BGM_LimitBoss_Loop01
+	smpsJump	BGM_LimitBoss_Jump03
 
-Mus8C_Boss_Call03:
+BGM_LimitBoss_Call03:
 	dc.b	nFs6, $06, nFs6, nFs7, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs7
 	dc.b	nFs6, nFs6, nFs6, nFs6, nFs6, nFs6, nFs6
 	smpsReturn
 
 ; FM2 Data
-Mus8C_Boss_FM2:
-	smpsSetvoice        $00
+BGM_LimitBoss_FM2:
+	smpsSetvoice	$00
 
-Mus8C_Boss_Jump02:
-	smpsNop             $01
+BGM_LimitBoss_Jump02:
 	dc.b	nFs4, $06, nFs5, nFs4, nFs5, nFs4, nFs5, nFs4, nFs5
-	smpsCall            Mus8C_Boss_Call02
+	smpsCall	BGM_LimitBoss_Call02
 	dc.b	nFs3, $06, nFs4, nFs4, $0C, nFs3, $06
-	smpsCall            Mus8C_Boss_Call02
-	dc.b	nFs4, $06, nFs4, nFs4, $0C, nFs4, $06, nFs4, $30
-	smpsNop             $01
-	smpsJump            Mus8C_Boss_Jump02
+	smpsCall	BGM_LimitBoss_Call02
+	dc.b	nFs4, $06, $06, $0C, $06, $30
+	smpsJump	BGM_LimitBoss_Jump02
 
-Mus8C_Boss_Call02:
+BGM_LimitBoss_Call02:
 	dc.b	nFs3, $06, nFs3, nFs4, nFs4, nFs4, nFs4, nFs4, nFs4, nFs3, $12, nFs4
-	dc.b	$06, nFs4, $0C, nFs4, nFs4, $06, nFs4, $0C, nFs4, $06, nFs4, nFs4
-	dc.b	$0C, nFs4, $06, nFs4, nFs4, $0C
+	dc.b	$06, $0C, $0C, $06, $0C, $06, $06, $0C, $06, $06, $0C
 	smpsReturn
 
 ; PSG2 Data
-Mus8C_Boss_PSG2:
-	smpsAlterNote       $02
-	smpsJump            Mus8C_Boss_Jump01
+BGM_LimitBoss_PSG2:
+	smpsAlterNote	$02
+	smpsJump	BGM_LimitBoss_Jump01
 
 ; FM3 Data
-Mus8C_Boss_FM3:
-	smpsSetvoice        $01
-	smpsPan             panLeft, $00
+BGM_LimitBoss_FM3:
+	smpsSetvoice	$01
+	smpsPan		panLeft, $00
 
-Mus8C_Boss_Jump01:
+BGM_LimitBoss_Jump01:
 	dc.b	nRst, $30
-	smpsCall            Mus8C_Boss_Call01
+	smpsCall	BGM_LimitBoss_Call01
 	dc.b	nFs5, $12, nRst, nFs6, $03, nRst, nFs6, nRst, nFs5, $12
-	smpsCall            Mus8C_Boss_Call01
-	dc.b	nFs5, $0C, nFs5, $03, nRst, nFs6, nRst, nFs6, $0C, nFs6, $03, nRst
-	dc.b	nFs6, nRst, nFs6, $0C, nFs6, $03, nRst, nFs6, $30
-	smpsJump            Mus8C_Boss_Jump01
+	smpsCall	BGM_LimitBoss_Call01
+	dc.b	nFs5, $0C, $03, nRst, nFs6, nRst, nFs6, $0C, $03, nRst
+	dc.b	nFs6, nRst, nFs6, $0C, $03, nRst, nFs6, $30
+	smpsJump	BGM_LimitBoss_Jump01
 
-Mus8C_Boss_Call01:
+BGM_LimitBoss_Call01:
 	dc.b	nRst, $1E, nFs5, $03, nRst, nFs5, nRst, nFs6, nRst, nFs6, $30, nRst
 	dc.b	$12, nFs5, $03, nRst, nFs5, nRst
 	smpsReturn
 
 ; FM1 Data
-Mus8C_Boss_FM1:
-	smpsAlterNote       $03
-	smpsJump            Mus8C_Boss_Jump00
+BGM_LimitBoss_FM1:
+	smpsAlterNote	$03
+	smpsJump	BGM_LimitBoss_Jump00
 
 ; FM4 Data
-Mus8C_Boss_FM4:
-	smpsPan             panRight, $00
+BGM_LimitBoss_FM4:
+	smpsPan		panRight, $00
 
-Mus8C_Boss_Jump00:
-	smpsSetvoice        $02
-	smpsModSet          $0C, $01, $04, $06
+BGM_LimitBoss_Jump00:
+	smpsSetvoice	$02
 
 ; PSG1 Data
-Mus8C_Boss_PSG1:
+BGM_LimitBoss_PSG1:
 	dc.b	nRst, $30
-	smpsCall            Mus8C_Boss_Call00
-	dc.b	nB6
-	smpsCall            Mus8C_Boss_Call00
-	dc.b	nB6, $18, nB6, nB6, $30
-	smpsJump            Mus8C_Boss_PSG1
+	smpsCall	BGM_LimitBoss_Call00
+	dc.b	$30
+	smpsCall	BGM_LimitBoss_Call00
+	dc.b	$18, $18, $30
+	smpsJump	BGM_LimitBoss_PSG1
 
-Mus8C_Boss_Call00:
-	dc.b	nB6, $04, nB6, nB6, nB6, $24, nRst, $0C, nB6, nB6, nB6, nB6
+BGM_LimitBoss_Call00:
+	dc.b	nB6, $04, $04, $04, $24, nRst, $0C, nB6, nB6, nB6, nB6
 	dc.b	$30
 	smpsReturn
 
-; PSG3 Data
-Mus8C_Boss_PSG3:
-	smpsStop
-
 ; DAC Data
-Mus8C_Boss_DAC:
-	dc.b	dSnare, $06, dSnare, dSnare, dSnare, dSnare, dSnare, dSnare, dSnare
+BGM_LimitBoss_DAC:
+	dc.b	dSnare, $06, $06, $06, $06, $06, $06, $06, $06
 
-Mus8C_Boss_Loop00:
-	dc.b	dSnare, $0C, dSnare, $04, dSnare, dSnare, dSnare, $06, dSnare, $0C, dSnare, $06
-	dc.b	dSnare, $12, dSnare, $06, dSnare, $0C, dSnare, $0C
-	smpsLoop            $00, $03, Mus8C_Boss_Loop00
-	dc.b	dSnare, $0C, dSnare, $04, dSnare, dSnare, dSnare, $06, dSnare, $0C, dSnare, $06
-	dc.b	dSnare, $06, dSnare, $0C, dSnare, $06, dSnare, $06, dSnare, $0C, dSnare, $06
-	dc.b	dSnare, $01, dSnare, $05, dSnare, $06, dSnare, dSnare, dSnare, dSnare, dSnare, dSnare
-	smpsJump            Mus8C_Boss_DAC
+BGM_LimitBoss_Loop00:
+	dc.b	dSnare, $0C, $04, $04, $04, $06, $0C, $06, $12, $06, $0C, $0C
+	smpsLoop	$00, $03, BGM_LimitBoss_Loop00
+	dc.b	$0C, $04, $04, $04, $06, $0C, $06, $06, $0C, $06, $06, $0C, $06
+	dc.b	$06, $06, $06, $06, $06, $06, $06, $06
+	smpsJump	BGM_LimitBoss_DAC
 
-Mus8C_Boss_Voices:
+BGM_LimitBoss_Voices:
 ;	Voice $00
 ;	$08
 ;	$0A, $70, $30, $00, 	$1F, $1F, $5F, $5F, 	$12, $0E, $0A, $0A
@@ -183,42 +172,6 @@ Mus8C_Boss_Voices:
 	smpsVcTotalLevel    $00, $27, $12, $1A
 
 ;	Voice $03
-;	$30
-;	$30, $30, $30, $30, 	$9E, $D8, $DC, $DC, 	$0E, $0A, $04, $05
-;	$08, $08, $08, $08, 	$BF, $BF, $BF, $BF, 	$14, $3C, $14, $80
-	smpsVcAlgorithm     $00
-	smpsVcFeedback      $06
-	smpsVcUnusedBits    $00
-	smpsVcDetune        $03, $03, $03, $03
-	smpsVcCoarseFreq    $00, $00, $00, $00
-	smpsVcRateScale     $03, $03, $03, $02
-	smpsVcAttackRate    $1C, $1C, $18, $1E
-	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $05, $04, $0A, $0E
-	smpsVcDecayRate2    $08, $08, $08, $08
-	smpsVcDecayLevel    $0B, $0B, $0B, $0B
-	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-	smpsVcTotalLevel    $00, $14, $3C, $14
-
-;	Voice $04
-;	$39
-;	$01, $51, $00, $00, 	$1F, $5F, $5F, $5F, 	$10, $11, $09, $09
-;	$07, $00, $00, $00, 	$2F, $2F, $2F, $1F, 	$20, $22, $20, $80
-	smpsVcAlgorithm     $01
-	smpsVcFeedback      $07
-	smpsVcUnusedBits    $00
-	smpsVcDetune        $00, $00, $05, $00
-	smpsVcCoarseFreq    $00, $00, $01, $01
-	smpsVcRateScale     $01, $01, $01, $00
-	smpsVcAttackRate    $1F, $1F, $1F, $1F
-	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $09, $09, $11, $10
-	smpsVcDecayRate2    $00, $00, $00, $07
-	smpsVcDecayLevel    $01, $02, $02, $02
-	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-	smpsVcTotalLevel    $00, $20, $22, $20
-
-;	Voice $05
 ;	$3A
 ;	$42, $43, $14, $71, 	$1F, $12, $1F, $1F, 	$04, $02, $04, $0A
 ;	$01, $01, $02, $0B, 	$1F, $1F, $1F, $1F, 	$1A, $16, $19, $80

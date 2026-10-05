@@ -6,7 +6,7 @@
 
 
 PauseGame:
-		nop	
+		nop
 		tst.b	(v_lives).w	; do you have any lives	left?
 		beq.w	Unpause		; if not, branch
 		tst.w	(f_pause).w	; is game already paused?
@@ -35,7 +35,7 @@ Pause_Loop:
 		move.w	#0,(v_demolength).w
 		bra.w	Pause_EndMusic
 		jmp	SS_ToSegaScreen
-		
+
 .islevel:
 		btst	#bitA,(v_jpadpress1).w ; is button A pressed?
 		beq.s	Pause_ChkB	; if not, branch

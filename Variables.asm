@@ -216,7 +216,7 @@ v_spritecount:		ds.b	1		; number of sprites on-screen
 			ds.b	5		; unused
 v_pcyc_num:		ds.w	1		; palette cycling - current reference number
 v_pcyc_time:		ds.w	1		; palette cycling - time until the next change
-v_random:		ds.l	1		; pseudo random number buffer
+			ds.l	1		; unused
 f_pause:		ds.w	1		; flag set to pause the game
 			ds.b	4		; unused
 v_vdp_buffer2:		ds.w	1		; VDP instruction buffer
@@ -485,7 +485,6 @@ v_levselsound:		ds.w	1		; level select - sound selected
 v_scorecopy:		ds.l	1		; score, duplicate
 v_top_solid_bit:	ds.b	1
 v_lrb_solid_bit:	ds.b	1
-			ds.b	$1A		; unused
 f_levselcheat:		ds.b	1		; level select cheat flag
 f_slomocheat:		ds.b	1		; slow motion & frame advance cheat flag
 f_debugcheat:		ds.b	1		; debug mode cheat flag
@@ -501,10 +500,23 @@ v_unused6:		ds.b	1		; unused
 f_demo:			ds.w	1		; demo mode flag (0 = no; 1 = yes; $8001 = ending)
 v_demonum:		ds.w	1		; demo level number (not the same as the level number)
 v_creditsnum:		ds.w	1		; credits index number
-			ds.b	2		; unused
-v_megadrive:		ds.b	1		; Megadrive machine type
-			ds.b	1		; unused
-f_debugmode:		ds.w	1		; debug mode flag
+			ds.b	$C		; unused
+
+v_gamechangeram:
+
+v_random:		ds.l	1		; Random Number Seed
+v_megadrive:		ds.w	1		; Megadrive machine type
+v_curgame		ds.b	1		; Current Game
+v_lastgame		ds.b	1		; Last Game
+
+v_vintcode:	; for v-int hijacking
+.jmp:			ds.w	1
+.addr:			ds.l	1
+
+v_hintcode:	; for h-int hijacking
+.jmp:			ds.w	1
+.addr:			ds.l	1
+
 v_init:			ds.l	1		; 'init' text string
 v_ram_end:
     if * > 0	; Don't declare more space than the RAM can contain!

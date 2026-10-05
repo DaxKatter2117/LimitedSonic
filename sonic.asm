@@ -24,7 +24,7 @@ FixBugs		  = 0	; change to 1 to enable bugfixes
 
 zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions smaller
 
-GameDebug = 0
+GameDebug = 1
 EmeraldDebug = 0
 
 	include "MacroSetup.asm"
@@ -2244,17 +2244,7 @@ Tit_LoadTitle:
 		bsr.w	PalLoad1
 		move.b	#bgm_Title,d0
 		bsr.w	PlaySound_Special	; play title screen music
-		move.b	#0,(f_debugmode).w ; disable debug mode
-;		move.w	#$178,(v_demolength).w ; run title screen for $178 frames
-		
-	if FixBugs
-		clearRAM v_sonicteam,v_sonicteam+object_size
-	else
-		; Bug: this only clears half of the "SONIC TEAM PRESENTS" slot.
-		; This is responsible for why the "PRESS START BUTTON" text doesn't
-		; show up, as the routine ID isn't reset.
 		clearRAM v_sonicteam,v_sonicteam+object_size/2
-	endif
 
 		move.b	#id_TitleSonic,(v_titlesonic).w ; load big Sonic object
 		move.b	#id_PSBTM,(v_pressstart).w ; load "PRESS START BUTTON" object
@@ -2904,7 +2894,7 @@ Level_LoadTitleCard:
 Level_TtlCardLoop:
 		move.b	#$C,(v_vbla_routine).w
 		bsr.w	WaitForVBla
-        subi.w  #1,(v_framecount).l
+		subi.w  #1,(v_framecount).l
 		jsr	(ExecuteObjects).l
 		jsr	(BuildSprites).l
 		bsr.w	RunPLC
@@ -2913,7 +2903,7 @@ Level_TtlCardLoop:
 		bne.s	Level_TtlCardLoop ; if not, branch
 		tst.l	(v_plc_buffer).w ; are there any items in the pattern load cue?
 		bne.s	Level_TtlCardLoop ; if yes, branch
-        tst.w   (v_framecount).l    ; has the loading screen finished
+		tst.w	(v_framecount).l    ; has the loading screen finished
 		bne.s	Level_TtlCardLoop ; if yes, branch        
 		jsr	(Hud_Base).l	; load basic HUD gfx
 
@@ -2955,21 +2945,8 @@ Level_SkipTtlCard:
 		move.b	#id_HUD,(v_hud).w ; load HUD object
 
 Level_ChkDebug:
-;		tst.b	(f_debugcheat).w ; has debug cheat been entered?
-;		beq.s	Level_ChkWater	; if not, branch
-;		btst	#bitA,(v_jpadhold1).w ; is A button held?
-;		beq.s	Level_ChkWater	; if not, branch
-;		move.b	#1,(f_debugmode).w ; enable debug mode
-
-Level_ChkWater:
 		move.w	#0,(v_jpadhold2).w
 		move.w	#0,(v_jpadhold1).w
-;		cmpi.b	#id_LZ,(v_zone).w ; is level LZ?
-;		bne.s	Level_LoadObj	; if not, branch
-;		move.b	#id_WaterSurface,(v_watersurface1).w ; load water surface object
-;		move.w	#$60,(v_watersurface1+obX).w
-;		move.b	#id_WaterSurface,(v_watersurface2).w
-;		move.w	#$120,(v_watersurface2+obX).w
 
 Level_LoadObj:
 		jsr	(ObjPosLoad).l
@@ -3348,11 +3325,6 @@ SS_LoadMusic:
 		clr.b	(v_lifecount).w
 		move.w	#0,(v_debuguse).w
 		move.w	#1800,(v_demolength).w
-;		tst.b	(f_debugcheat).w ; has debug cheat been entered?
-;		beq.s	SS_NoDebug	; if not, branch
-;		btst	#bitA,(v_jpadhold1).w ; is A button pressed?
-;		beq.s	SS_NoDebug	; if not, branch
-;		move.b	#1,(f_debugmode).w ; enable debug mode
 
 SS_NoDebug:
 		move.w	(v_vdp_buffer1).w,d0
@@ -3917,9 +3889,6 @@ End_LoadMusic:
 		move.w	#bgm_Ending,d0
 		bsr.w	PlaySound	; play ending sequence music
 		bra.s	End_LoadSonic
-;		btst	#bitA,(v_jpadhold1).w ; is button A pressed?
-;		beq.s	End_LoadSonic	; if not, branch
-;		move.b	#1,(f_debugmode).w ; enable debug mode
 
 .goodmusic:
 		move.w	#bgm_GEnding,d0
@@ -7104,16 +7073,6 @@ Sonic_Main:	; Routine 0
 		move.w	#$80,(v_sonspeeddec).w ; Sonic's deceleration
 
 Sonic_Control:	; Routine 2
-;		tst.w	(f_debugmode).w	; is debug cheat enabled?
-;		beq.s	loc_12C58	; if not, branch
-;		btst	#bitB,(v_jpadpress1).w ; is button B pressed?
-;		beq.s	loc_12C58	; if not, branch
-;		move.w	#1,(v_debuguse).w ; change Sonic into a ring/item
-;		clr.b	(f_lockctrl).w
-;		rts	
-; ===========================================================================
-
-;loc_12C58:
 		tst.b	(f_lockctrl).w	; are controls locked?
 		bne.s	loc_12C64	; if yes, branch
 		move.w	(v_jpadhold1).w,(v_jpadhold2).w ; enable joypad control
