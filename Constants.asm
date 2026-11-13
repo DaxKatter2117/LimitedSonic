@@ -122,6 +122,11 @@ bitL:		equ 2
 bitDn:		equ 1
 bitUp:		equ 0
 
+; For doing some vint/hint trickery
+opcode_rte		= $4E73
+opcode_jmpabslong	= $4EF9
+opcode_jmpabsword	= $4EF8
+
 ; Object variables
 obID:		equ 0	; object ID number
 obRender:	equ 1	; bitfield for x/y flip, display mode

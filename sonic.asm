@@ -22,9 +22,11 @@ ZoneCount	  = 6	; discrete zones are: GHZ, MZ, SYZ, LZ, SLZ, and SBZ
 
 FixBugs		  = 0	; change to 1 to enable bugfixes
 
+SonicComp	  = 0	; change to 1 to enable Sonic Compilation
+
 zeroOffsetOptimization = 0	; if 1, makes a handful of zero-offset instructions smaller
 
-GameDebug = 1
+GameDebug = 0
 EmeraldDebug = 0
 
 	include "MacroSetup.asm"
@@ -65,9 +67,9 @@ Vectors:	dc.l v_systemstack&$FFFFFF	; Initial stack pointer value
 		dc.l ErrorTrap			; IRQ level 1
 		dc.l ErrorTrap			; IRQ level 2
 		dc.l ErrorTrap			; IRQ level 3 (28)
-		dc.l HBlank				; IRQ level 4 (horizontal retrace interrupt)
+		dc.l v_hintcode				; IRQ level 4 (horizontal retrace interrupt)
 		dc.l ErrorTrap			; IRQ level 5
-		dc.l VBlank				; IRQ level 6 (vertical retrace interrupt)
+		dc.l v_vintcode				; IRQ level 6 (vertical retrace interrupt)
 		dc.l ErrorTrap			; IRQ level 7 (32)
 		dc.l ErrorTrap			; TRAP #00 exception
 		dc.l ErrorTrap			; TRAP #01 exception
@@ -132,8 +134,14 @@ Checksum:
 		dc.w $AFC7
 		endif
 		dc.b "J               " ; I/O support
+
+	if SonicComp=0
 		dc.l StartOfRom		; Start address of ROM
 RomEndLoc:	dc.l EndOfRom-1		; End address of ROM
+	else
+		dc.l 0
+		dc.l $7FFFF
+	endif
 		dc.l $FF0000		; Start address of RAM
 		dc.l $FFFFFF		; End address of RAM
 		if EnableSRAM=1
@@ -146,6 +154,14 @@ RomEndLoc:	dc.l EndOfRom-1		; End address of ROM
 		dc.b "                                                    " ; Notes (unused, anything can be put in this space, but it has to be 52 bytes.)
 		dc.b "JUE             " ; Region (Country code)
 EndOfHeader:
+
+; ===========================================================================
+
+	if SonicComp=1
+	rept	$200200-*
+	dc.b	$FF
+	endr
+	endif
 
 ; ===========================================================================
 
@@ -313,6 +329,7 @@ GameProgram:
 		beq.w	GameInit	; if yes, branch
 
 CheckSumCheck:
+	if SonicComp=0
 		movea.l	#EndOfHeader,a0	; start	checking bytes after the header	($200)
 		movea.l	#RomEndLoc,a1	; stop at end of ROM
 		move.l	(a1),d0
@@ -327,9 +344,12 @@ CheckSumCheck:
 		bne.w	CheckSumError	; if they don't match, branch
 
 CheckSumOk:
+	else
+		move.l	#'SEGA',(v_segacomp).w
+	endif
 		lea	(v_crossresetram).w,a6
 		moveq	#0,d7
-		move.w	#(v_ram_end-v_crossresetram)/4-1,d6
+		move.w	#(v_gamechangeram-v_crossresetram)/4-1,d6
 .clearRAM:
 		move.l	d7,(a6)+
 		dbf	d6,.clearRAM	; clear RAM ($FE00-$FFFF)
@@ -993,6 +1013,11 @@ ReadJoypads:
 
 
 VDPSetupGame:
+		disable_ints
+		move.w	#opcode_jmpabslong,(v_vintcode.jmp).w
+		move.l	#VBlank,(v_vintcode.addr).w
+		move.w	#opcode_jmpabslong,(v_hintcode.jmp).w
+		move.l	#HBlank,(v_hintcode.addr).w
 		lea	(vdp_control_port).l,a0
 		lea	(vdp_data_port).l,a1
 		lea	(VDPSetupArray).l,a2
@@ -1398,8 +1423,6 @@ Pal_SLZCyc:	binclude	"palette/Cycle - SLZ.bin"
 Pal_SYZCyc1:	binclude	"palette/Cycle - SYZ1.bin"
 Pal_SYZCyc2:	binclude	"palette/Cycle - SYZ2.bin"
 
-		include	"_inc/SBZ Palette Scripts.asm"
-
 Pal_SBZCyc1:	binclude	"palette/Cycle - SBZ 1.bin"
 Pal_SBZCyc2:	binclude	"palette/Cycle - SBZ 2.bin"
 Pal_SBZCyc3:	binclude	"palette/Cycle - SBZ 3.bin"
@@ -1445,7 +1468,7 @@ PalFadeIn_Alt:				; start position and size are already set
 		bsr.w	RunPLC
 		move.b	#5,d5
 		dbf	d4,.mainloop
-		rts	
+		rts
 ; End of function PaletteFadeIn
 
 
@@ -2244,27 +2267,22 @@ Tit_LoadTitle:
 		bsr.w	PalLoad1
 		move.b	#bgm_Title,d0
 		bsr.w	PlaySound_Special	; play title screen music
-		clearRAM v_sonicteam,v_sonicteam+object_size/2
+		clearRAM v_sonicteam,v_sonicteam+object_size
 
 		move.b	#id_TitleSonic,(v_titlesonic).w ; load big Sonic object
-		move.b	#id_PSBTM,(v_pressstart).w ; load "PRESS START BUTTON" object
-		;clr.b	(v_pressstart+obRoutine).w ; The 'Mega Games 10' version of Sonic 1 added this line, to fix the 'PRESS START BUTTON' object not appearing
-
-		if Revision<>0
-			tst.b   (v_megadrive).w	; is console Japanese?
-			bpl.s   .isjap		; if yes, branch
-		endif
 
 		move.b	#id_PSBTM,(v_titletm).w ; load "TM" object
 		move.b	#3,(v_titletm+obFrame).w
 .isjap:
 		move.b	#id_PSBTM,(v_ttlsonichide).w ; load object which hides part of Sonic
 		move.b	#2,(v_ttlsonichide+obFrame).w
+
 		jsr	(ExecuteObjects).l
 		bsr.w	DeformLayers
 		jsr	(BuildSprites).l
 		moveq	#plcid_Main,d0
 		bsr.w	NewPLC
+
 		move.w	#0,(v_title_dcount).w
 		move.w	#0,(v_title_ccount).w
 		move.w	(v_vdp_buffer1).w,d0
@@ -8648,20 +8666,10 @@ Art_Hud:	binclude	"artunc/HUD Numbers.bin" ; 8x16 pixel numbers on HUD
 		include	"_inc/Pattern Load Cues.asm"
 
 		align	$200
-		if Revision=0
-Nem_SegaLogo:	binclude	"artnem/Sega Logo.nem"	; large Sega logo
-		even
-Eni_SegaLogo:	binclude	"tilemaps/Sega Logo.eni" ; large Sega logo (mappings)
-		even
-		else
-		rept $300
-			dc.b	$FF
-		endm
 Nem_SegaLogo:	binclude	"artnem/Sega Logo (JP1).nem" ; large Sega logo
 			even
 Eni_SegaLogo:	binclude	"tilemaps/Sega Logo (JP1).eni" ; large Sega logo (mappings)
 			even
-		endif
 Eni_Title:	binclude	"tilemaps/Title Screen.eni" ; title screen foreground (mappings)
 		even
 Nem_TitleFg:	binclude	"artnem/Title Screen Foreground.nem"
@@ -9071,15 +9079,6 @@ Nem_CreditText:	binclude	"artnem/Ending - Credits.nem"
 Nem_EndStH:	binclude	"artnem/Ending - StH Logo.nem"
 		even
 
-		if Revision=0
-		rept $104
-		dc.b $FF			; why?
-		endm
-		else
-		rept $40
-		dc.b $FF
-		endm
-		endif
 ; ---------------------------------------------------------------------------
 ; Collision data
 ; ---------------------------------------------------------------------------
@@ -9388,20 +9387,15 @@ ObjPos_End:	binclude	"objpos/ending.bin"
 		even
 ObjPos_Null:	dc.b $FF, $FF, 0, 0, 0,	0
 
-		if Revision=0
-		rept $62A
-		dc.b $FF
-		endm
-		else
-		rept $63C
-		dc.b $FF
-		endm
-		endif
-
 SoundDriver:	include "s1.sounddriver.asm"
+		even
+
+	if SonicComp=1
+	rept	$280000-*
+	dc.b	$FF
+	endr
+	endif
 
 ; end of 'ROM'
-		even
 EndOfRom:
-
 		END

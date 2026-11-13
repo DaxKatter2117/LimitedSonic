@@ -481,7 +481,6 @@ v_timingandscreenvariables_end:
 v_levseldelay:		ds.w	1		; level select - time until change when up/down is held
 v_levselitem:		ds.w	1		; level select - item selected
 v_levselsound:		ds.w	1		; level select - sound selected
-			ds.b	$3A		; unused
 v_scorecopy:		ds.l	1		; score, duplicate
 v_top_solid_bit:	ds.b	1
 v_lrb_solid_bit:	ds.b	1
@@ -500,16 +499,22 @@ v_unused6:		ds.b	1		; unused
 f_demo:			ds.w	1		; demo mode flag (0 = no; 1 = yes; $8001 = ending)
 v_demonum:		ds.w	1		; demo level number (not the same as the level number)
 v_creditsnum:		ds.w	1		; credits index number
-			ds.b	$C		; unused
+			ds.b	$36		; unused
+v_random:		ds.l	1		; Random Number Seed
+v_megadrive:		ds.w	1		; Megadrive machine type
+v_init:			ds.l	1		; 'init' text string
 
 v_gamechangeram:
 
-v_random:		ds.l	1		; Random Number Seed
-v_megadrive:		ds.w	1		; Megadrive machine type
-v_curgame		ds.b	1		; Current Game
-v_lastgame		ds.b	1		; Last Game
+v_curgame:		ds.b	1		; Current Game
+v_lastgame:		ds.b	1		; Last Game
+v_segacomp:		ds.l	1		; unused
 
-v_vintcode:	; for v-int hijacking
+v_stackcode:	; for sonic compilation
+.jmp:			ds.w	1
+.addr:			ds.l	1
+
+v_entrycode:	; for sonic compilation
 .jmp:			ds.w	1
 .addr:			ds.l	1
 
@@ -517,7 +522,10 @@ v_hintcode:	; for h-int hijacking
 .jmp:			ds.w	1
 .addr:			ds.l	1
 
-v_init:			ds.l	1		; 'init' text string
+v_vintcode:	; for v-int hijacking
+.jmp:			ds.w	1
+.addr:			ds.l	1
+
 v_ram_end:
     if * > 0	; Don't declare more space than the RAM can contain!
 	fatal "The RAM variable declarations are too large by $\{*} bytes."
